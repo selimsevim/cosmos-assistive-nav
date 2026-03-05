@@ -165,7 +165,7 @@ def analyze_frames(
     call_meta: Dict[str, Any] = None,
 ) -> Dict[str, Any]:
     _ = current_state
-    url = os.environ.get("COSMOS_ENDPOINT", "http://89.169.108.14:8000/v1/chat/completions")
+    url = os.environ.get("COSMOS_ENDPOINT", "http://<IP>/v1/chat/completions")
     model = os.environ.get("COSMOS_MODEL", "nvidia/Cosmos-Reason2-8B")
     timeout_seconds = 15
 
