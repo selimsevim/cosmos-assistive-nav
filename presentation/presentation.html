@@ -1,0 +1,451 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>PathSense: Vision Reasoning for Assistive Navigation - Presentation</title>
+  <style>
+    :root {
+      --bg: #f6f2e8;
+      --surface: #fffdf7;
+      --ink: #1f2933;
+      --muted: #52606d;
+      --line: #d9d2c1;
+      --accent: #0f766e;
+      --accent-2: #b45309;
+      --danger: #991b1b;
+      --good: #166534;
+      --shadow: 0 12px 28px rgba(31, 41, 51, 0.1);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      font-family: "Space Grotesk", "Avenir Next", "Trebuchet MS", sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+    }
+
+    .deck {
+      width: 100%;
+      height: 100%;
+      overflow-y: auto;
+      scroll-snap-type: y mandatory;
+      scroll-behavior: smooth;
+      background:
+        radial-gradient(circle at 10% 0%, #f8efdd 0%, transparent 40%),
+        radial-gradient(circle at 90% 15%, #e2f3ef 0%, transparent 45%),
+        var(--bg);
+    }
+
+    .topbar {
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(1080px, 92vw);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 14px;
+      background: rgba(255, 253, 247, 0.92);
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+      z-index: 20;
+      backdrop-filter: blur(4px);
+    }
+
+    .brand {
+      font-weight: 800;
+      letter-spacing: 0.01em;
+      font-size: 0.92rem;
+      color: var(--accent);
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    button {
+      border: 1px solid #cfd8ca;
+      background: #fbfff6;
+      color: #22443b;
+      border-radius: 9px;
+      padding: 8px 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    button:hover {
+      border-color: #9eb9af;
+      background: #f6fff2;
+    }
+
+    .counter {
+      min-width: 72px;
+      text-align: center;
+      font-size: 0.82rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .slide {
+      min-height: 100vh;
+      width: 100%;
+      scroll-snap-align: start;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 90px 20px 42px;
+    }
+
+    .content {
+      width: min(1080px, 92vw);
+      border: 1px solid var(--line);
+      background: var(--surface);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: clamp(20px, 3vw, 36px);
+    }
+
+    .kicker {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 10px;
+    }
+
+    h1, h2 {
+      margin: 0 0 10px;
+      line-height: 1.08;
+      font-size: clamp(1.8rem, 4vw, 3rem);
+    }
+
+    p.lead {
+      margin: 0 0 20px;
+      color: var(--muted);
+      font-size: clamp(1rem, 1.45vw, 1.15rem);
+      max-width: 75ch;
+    }
+
+    .grid {
+      display: grid;
+      gap: 12px;
+      grid-template-columns: repeat(12, 1fr);
+    }
+
+    .card {
+      border: 1px solid var(--line);
+      background: #fffefb;
+      border-radius: 12px;
+      padding: 12px;
+    }
+
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 1.03rem;
+    }
+
+    .card p, .card li {
+      margin: 0;
+      color: #44505c;
+      line-height: 1.35;
+    }
+
+    .card ul {
+      margin: 0;
+      padding-left: 18px;
+    }
+
+    .image-card {
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 320px;
+      background: #fcfbf7;
+    }
+
+    .image-card img {
+      width: 100%;
+      height: 100%;
+      max-height: 380px;
+      object-fit: cover;
+      border-radius: 10px;
+      border: 1px solid #e7e0d0;
+      display: block;
+    }
+
+    .flow {
+      margin-top: 8px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .node {
+      border: 1px solid #d4dccd;
+      border-radius: 10px;
+      background: #f9fff8;
+      padding: 10px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      min-width: 130px;
+      text-align: center;
+    }
+
+    .arr {
+      color: #64748b;
+      font-size: 1.1rem;
+      font-weight: 700;
+    }
+
+    .metric {
+      text-align: center;
+      padding: 16px 10px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: #fff;
+    }
+
+    .metric b {
+      display: block;
+      font-size: 2rem;
+      line-height: 1;
+      margin-bottom: 4px;
+    }
+
+    .metric small {
+      color: var(--muted);
+      font-size: 0.85rem;
+      font-weight: 700;
+    }
+
+    .problem { color: var(--danger); }
+    .solution { color: var(--accent-2); }
+    .result { color: var(--good); }
+
+    .dots {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      justify-content: center;
+      margin-top: 18px;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: #d5dece;
+      border: 0;
+      padding: 0;
+      cursor: pointer;
+    }
+
+    .dot.active {
+      background: var(--accent);
+      transform: scale(1.2);
+    }
+
+    .hint {
+      margin-top: 12px;
+      color: #6b7280;
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .span-4, .span-5, .span-6, .span-7, .span-8, .span-12 { grid-column: span 12; }
+      .flow { display: grid; grid-template-columns: 1fr; }
+      .arr { display: none; }
+      .image-card { min-height: 220px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="topbar">
+    <div class="brand">PathSense: Vision Reasoning for Assistive Navigation</div>
+    <div class="controls">
+      <button id="prevBtn" type="button">Prev</button>
+      <div id="counter" class="counter">1 / 3</div>
+      <button id="nextBtn" type="button">Next</button>
+    </div>
+  </div>
+
+  <main id="deck" class="deck" aria-label="Presentation Deck">
+    <section id="slide-1" class="slide">
+      <article class="content">
+        <span class="kicker">Part 1</span>
+        <h1 class="problem">Problem</h1>
+        <p class="lead">
+          Blind pedestrians often receive hazard awareness too late.
+        </p>
+
+        <div class="grid">
+          <div class="card span-7">
+            <ul>
+              <li>Most assistive tools (cane, guide dog) detect obstacles only when they are very close.</li>
+              <li>Many dangers are spatial: path edges/curbs, terrain changes/slopes, and approaching cyclists or vehicles.</li>
+              <li>Traditional vision systems focus on object detection, not navigation reasoning.</li>
+              <li><b>Result:</b> important walking hazards are often recognized too late.</li>
+            </ul>
+          </div>
+          <div class="card image-card span-5">
+            <img src="problem.png" alt="Problem illustration for assistive navigation risk awareness" />
+          </div>
+        </div>
+
+        <div class="dots" aria-hidden="true">
+          <button class="dot active" data-slide="0" type="button"></button>
+          <button class="dot" data-slide="1" type="button"></button>
+          <button class="dot" data-slide="2" type="button"></button>
+        </div>
+      </article>
+    </section>
+
+    <section id="slide-2" class="slide">
+      <article class="content">
+        <span class="kicker">Part 2</span>
+        <h2 class="solution">Solution</h2>
+        <p class="lead">
+          Vision reasoning for walking safety.
+        </p>
+
+        <div class="grid">
+          <div class="card span-7">
+            <ul>
+              <li>Imagine a small camera attached to the pedestrian's chest, continuously capturing the walking path.</li>
+              <li>The system sends two frames to the model: earlier frame -> current frame.</li>
+              <li>By comparing them, the model can reason about changes in the path, approaching hazards, and spatial structure of the environment.</li>
+              <li>Instead of describing the whole scene, the system outputs a simple safety action: <code>SAFE</code>, <code>SLOW</code>, <code>STOP</code>, <code>EDGE_LEFT</code>, <code>EDGE_RIGHT</code>.</li>
+            </ul>
+          </div>
+          <div class="card image-card span-5">
+            <img src="solution.png" alt="Solution illustration for vision reasoning with earlier and current frame comparison" />
+          </div>
+        </div>
+
+        <div class="dots" aria-hidden="true">
+          <button class="dot" data-slide="0" type="button"></button>
+          <button class="dot active" data-slide="1" type="button"></button>
+          <button class="dot" data-slide="2" type="button"></button>
+        </div>
+      </article>
+    </section>
+
+    <section id="slide-3" class="slide">
+      <article class="content">
+        <span class="kicker">Part 3</span>
+        <h2 class="result">Demo</h2>
+        <p class="lead">
+          Real walking scenarios.
+        </p>
+
+        <div class="card span-12">
+          <ul>
+            <li>We test the system on three common navigation situations that can be risky for blind pedestrians.</li>
+            <li><b>Scenario 1 — Oncoming Cyclist:</b> The model detects a moving object approaching on the walking path and recommends slowing down.</li>
+            <li><b>Scenario 2 — Path Slope / Transition:</b> The model recognizes a terrain change where the path splits and slopes downward, signaling caution.</li>
+            <li><b>Scenario 3 — Path Edge Proximity:</b> The model detects when the pedestrian moves close to a curb or edge and warns about the boundary.</li>
+          </ul>
+        </div>
+
+        <div class="dots" aria-hidden="true">
+          <button class="dot" data-slide="0" type="button"></button>
+          <button class="dot" data-slide="1" type="button"></button>
+          <button class="dot active" data-slide="2" type="button"></button>
+        </div>
+
+
+      </article>
+    </section>
+  </main>
+
+  <script>
+    (function () {
+      const deck = document.getElementById("deck");
+      const slides = Array.from(document.querySelectorAll(".slide"));
+      const counter = document.getElementById("counter");
+      const prevBtn = document.getElementById("prevBtn");
+      const nextBtn = document.getElementById("nextBtn");
+      const dots = Array.from(document.querySelectorAll(".dot"));
+      let activeIndex = 0;
+
+      function setActive(index) {
+        activeIndex = Math.max(0, Math.min(slides.length - 1, index));
+        counter.textContent = (activeIndex + 1) + " / " + slides.length;
+        dots.forEach((dot, i) => {
+          if (i === activeIndex) {
+            dot.classList.add("active");
+          } else {
+            dot.classList.remove("active");
+          }
+        });
+      }
+
+      function go(index) {
+        setActive(index);
+        slides[activeIndex].scrollIntoView({ behavior: "smooth", block: "start" });
+      }
+
+      function currentFromScroll() {
+        const top = deck.scrollTop;
+        const h = deck.clientHeight || window.innerHeight;
+        const idx = Math.round(top / h);
+        setActive(idx);
+      }
+
+      prevBtn.addEventListener("click", function () {
+        go(activeIndex - 1);
+      });
+
+      nextBtn.addEventListener("click", function () {
+        go(activeIndex + 1);
+      });
+
+      dots.forEach((dot) => {
+        dot.addEventListener("click", function () {
+          const target = Number(dot.getAttribute("data-slide") || "0");
+          go(target);
+        });
+      });
+
+      document.addEventListener("keydown", function (event) {
+        if (event.key === "ArrowRight" || event.key === "PageDown") {
+          event.preventDefault();
+          go(activeIndex + 1);
+        }
+        if (event.key === "ArrowLeft" || event.key === "PageUp") {
+          event.preventDefault();
+          go(activeIndex - 1);
+        }
+      });
+
+      deck.addEventListener("scroll", currentFromScroll, { passive: true });
+      setActive(0);
+    })();
+  </script>
+</body>
+</html>
